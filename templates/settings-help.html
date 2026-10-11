@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>Settings &amp; Help | DevOps Runbook</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="DevOps Runbook dashboard">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>runbook<span class="brand-period">.</span></span>
+      </a>
+      <p class="nav-heading">Workspace</p>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link" href="{{ url_for('home') }}">
+          <span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('all_runbooks') }}">
+          <span class="nav-icon" aria-hidden="true">▤</span><span>All Runbooks</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('new_runbook') }}">
+          <span class="nav-icon" aria-hidden="true">＋</span><span>Create Runbook</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('browse_categories') }}">
+          <span class="nav-icon" aria-hidden="true">◈</span><span>Categories</span>
+        </a>
+      </nav>
+      <p class="nav-heading secondary-heading">Preferences</p>
+      <nav class="side-nav" aria-label="Preferences">
+        <a class="nav-link is-active" href="{{ url_for('settings_help') }}#settings" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('settings_help') }}#help">
+          <span class="nav-icon" aria-hidden="true">?</span><span>Help</span>
+        </a>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Stored locally on this device</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <span class="topbar-title">Settings &amp; Help</span>
+        <span class="local-badge"><span aria-hidden="true">●</span> Local workspace</span>
+      </header>
+
+      <div class="dashboard-content listing-content settings-help-content">
+        <section class="listing-heading" aria-labelledby="settings-help-title">
+          <div>
+            <p class="eyebrow">Local workspace guide</p>
+            <h1 id="settings-help-title">Settings &amp; Help</h1>
+            <p class="welcome-copy">Application details, data safety, and everyday project commands.</p>
+          </div>
+        </section>
+
+        <section id="settings" class="panel guide-section" aria-labelledby="app-info-title">
+          <div class="guide-section-heading">
+            <p class="eyebrow">Application</p>
+            <h2 id="app-info-title">About this app</h2>
+          </div>
+          <dl class="app-info-grid">
+            <div><dt>Application</dt><dd>DevOps Runbook</dd></div>
+            <div><dt>Version</dt><dd>{{ app_version }}</dd></div>
+            <div><dt>Technology</dt><dd>Python · Flask · HTML · CSS · JavaScript</dd></div>
+            <div><dt>Runbook storage</dt><dd><code>data/runbooks/</code> (one JSON file per runbook)</dd></div>
+          </dl>
+          <p>Records stay on this computer. The app does not sync data automatically; using Git to share records requires deliberately tracking, committing, and pushing those files to a remote repository.</p>
+          <h3>Run locally</h3>
+          <p>From the project folder, create a virtual environment, install Flask, and start the local server:</p>
+          <pre><code>py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python app.py</code></pre>
+          <p>Open <code>http://127.0.0.1:5000/</code> in your browser. Stop the server with <code>Ctrl+C</code>. If PowerShell blocks activation, run <code>.\.venv\Scripts\python.exe -m pip install -r requirements.txt</code> and then <code>.\.venv\Scripts\python.exe app.py</code>.</p>
+          <div class="guide-action-row">
+            <a class="button button-secondary" href="{{ url_for('home') }}#settings">Appearance settings</a>
+            <button id="theme-toggle" class="button button-secondary" type="button" aria-pressed="false">Switch to dark theme</button>
+          </div>
+        </section>
+
+        <section id="runbook-data" class="panel guide-section" aria-labelledby="data-title">
+          <div class="guide-section-heading">
+            <p class="eyebrow">Data and workflow</p>
+            <h2 id="data-title">Runbook files and schema</h2>
+          </div>
+          <p>Runbook JSON files are stored in <code>data/runbooks/</code> relative to the project folder. Each filename is <code>&lt;id&gt;.json</code>; the ID must match its filename and use lowercase letters, digits, and hyphens.</p>
+          <p>Each record includes an ID, title, category, technologies, environment, severity, symptoms and errors, root-cause status/details, prerequisites, investigation and resolution steps, verification, rollback, prevention, tags, and timezone-aware creation/update timestamps. Step objects can include a description, display-only command, expected result, and notes. See <a href="#runbook-data">the schema summary above</a> and the complete schema in <code>README.md</code> under the heading <code>Schema</code>.</p>
+          <p>Use the form to create or edit records; the app validates required fields and previews the JSON before saving. Browse <a href="{{ url_for('all_runbooks') }}">All Runbooks</a> or <a href="{{ url_for('browse_categories') }}">Categories and Technologies</a>.</p>
+          <div class="guide-action-row">
+            <a class="button button-primary" href="{{ url_for('new_runbook') }}">Create a runbook</a>
+            <a class="button button-secondary" href="{{ url_for('all_runbooks') }}">Open All Runbooks</a>
+          </div>
+        </section>
+
+        <section id="git-workflow" class="panel guide-section" aria-labelledby="git-title">
+          <div class="guide-section-heading">
+            <p class="eyebrow">Source control</p>
+            <h2 id="git-title">Git workflow</h2>
+          </div>
+          <p>Replace <code>&lt;repository-url&gt;</code> with the URL for your own repository. Do not put passwords, access tokens, or other secrets in commands or runbook files.</p>
+          <ol class="guide-steps">
+            <li><strong>Clone:</strong><pre><code>git clone &lt;repository-url&gt;
+Set-Location &lt;repository-folder&gt;</code></pre></li>
+            <li><strong>Pull updates:</strong><pre><code>git status
+git pull</code></pre></li>
+            <li><strong>Review changes before staging:</strong><pre><code>git status
+git diff
+git diff -- data/runbooks</code></pre></li>
+            <li><strong>Commit reviewed work:</strong><pre><code>git add README.md app.py templates static tests data/runbooks
+git diff --cached
+git commit -m "Describe the runbook changes"</code></pre></li>
+            <li><strong>Push your branch:</strong><pre><code>git push</code></pre></li>
+          </ol>
+          <p>Git sync only applies to files intentionally tracked in a Git repository. This app does not synchronize local records by itself. Confirm that the repository and its sharing policy are appropriate before tracking operational notes.</p>
+        </section>
+
+        <section id="backup" class="panel guide-section" aria-labelledby="backup-title">
+          <div class="guide-section-heading">
+            <p class="eyebrow">Recovery</p>
+            <h2 id="backup-title">Back up and restore runbooks</h2>
+          </div>
+          <p>Run these PowerShell commands from the project folder. The backup is written outside <code>data/runbooks/</code>; choose a protected location with enough space.</p>
+          <h3>Create a timestamped backup</h3>
+          <pre><code>$backup = ".\backup\runbooks-$(Get-Date -Format yyyyMMdd-HHmmss)"
+New-Item -ItemType Directory -Path $backup -Force
+Copy-Item -Path .\data\runbooks\*.json -Destination $backup</code></pre>
+          <h3>Restore from a backup</h3>
+          <pre><code>Copy-Item -Path .\backup\runbooks-YYYYMMDD-HHMMSS\*.json `
+  -Destination .\data\runbooks\ -Force</code></pre>
+          <p>Before restoring, stop the app and back up the current directory. Verify the chosen backup folder and JSON files first; the restore command overwrites files with matching names. Reload the app and check the runbook list afterward. The app has no built-in bulk import, export, delete, or restore operation.</p>
+        </section>
+
+        <section id="help" class="panel guide-section" aria-labelledby="help-title">
+          <div class="guide-section-heading">
+            <p class="eyebrow">Troubleshooting</p>
+            <h2 id="help-title">Common issues</h2>
+          </div>
+          <dl class="issue-list">
+            <div><dt>Flask is not installed</dt><dd>Activate the project virtual environment and run <code>python -m pip install -r requirements.txt</code>. Confirm Flask remains pinned in <code>requirements.txt</code>.</dd></div>
+            <div><dt>Port 5000 is occupied</dt><dd>Stop the other local process using the port, then retry <code>python app.py</code>. The development server binds to <code>127.0.0.1</code>.</dd></div>
+            <div><dt>Malformed JSON</dt><dd>Use the API error message to identify the invalid record, validate its JSON syntax and required schema fields, then restore a known-good backup if needed. Keep a copy before manual repair.</dd></div>
+            <div><dt>Git reports a conflict</dt><dd>Run <code>git status</code>, inspect each conflicted file, resolve the markers without discarding either needed change, then stage and commit the resolution. For JSON conflicts, validate the final JSON before restarting the app.</dd></div>
+            <div><dt>A save fails</dt><dd>Keep the form open; validation and API failures leave entered fields in place. Check that <code>data/runbooks/</code> is writable, the record is valid, and the ID is not already in use. Failed updates preserve the previous JSON file.</dd></div>
+          </dl>
+          <p>For project setup and the full JSON/API documentation, see the <a href="{{ url_for('home') }}#help">dashboard Help section</a> and the <code>README.md</code> in the project root.</p>
+        </section>
+      </div>
+      <footer class="page-footer">DevOps Runbook <span aria-hidden="true">·</span> Local by design</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "id": "aws-ec2-disk-usage",
+  "title": "Sample: Investigate high disk usage on an EC2 instance",
+  "summary": "Identify disk pressure, recover safe space, and verify filesystem health.",
+  "category": "Cloud infrastructure",
+  "technologies": [
+    "AWS",
+    "EC2",
+    "Linux"
+  ],
+  "environment": "Non-production Linux EC2 instance",
+  "severity": "high",
+  "symptoms": [
+    "Filesystem usage approaches its configured capacity.",
+    "Applications report write failures or reduced availability."
+  ],
+  "error_messages": [
+    "No space left on device"
+  ],
+  "root_cause": {
+    "status": "suspected",
+    "details": "A growing application log or temporary data may be consuming filesystem capacity; confirm with filesystem and directory usage checks."
+  },
+  "prerequisites": [
+    "Approved access to the instance through the organization's normal access process.",
+    "Confirm the affected mount and service owner before cleanup."
+  ],
+  "investigation_steps": [
+    "Check filesystem capacity and inode usage for the affected mount.",
+    "Identify the largest directories and recently growing files.",
+    "Review service logs and recent deployment or workload changes."
+  ],
+  "resolution_steps": [
+    "Follow the owning service's retention procedure to rotate or remove verified disposable files.",
+    "If capacity must be increased, follow the approved volume expansion and filesystem grow procedure."
+  ],
+  "verification_steps": [
+    "Confirm filesystem capacity and inode availability have recovered.",
+    "Verify the affected service can write and passes its health checks."
+  ],
+  "rollback_steps": [
+    "Restore retained files from the approved backup if cleanup removed required data.",
+    "If a volume change caused an issue, follow the platform's documented volume recovery procedure."
+  ],
+  "prevention": [
+    "Configure log rotation and retention for application logs.",
+    "Alert on filesystem capacity and inode thresholds."
+  ],
+  "tags": [
+    "sample",
+    "disk",
+    "storage"
+  ],
+  "created_at": "2026-10-11T12:00:00Z",
+  "updated_at": "2026-10-11T12:00:00Z"
+}

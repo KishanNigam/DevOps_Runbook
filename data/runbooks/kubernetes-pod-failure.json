@@ -1,0 +1,56 @@
+{
+  "id": "kubernetes-pod-failure",
+  "title": "Sample: Investigate a Kubernetes pod failure",
+  "summary": "Inspect pod scheduling, container state, and health before recovery.",
+  "category": "Containers",
+  "technologies": [
+    "Kubernetes",
+    "kubectl"
+  ],
+  "environment": "Non-production Kubernetes cluster",
+  "severity": "high",
+  "symptoms": [
+    "A pod remains pending, repeatedly restarts, or fails readiness checks.",
+    "A workload has fewer ready replicas than its declared target."
+  ],
+  "error_messages": [
+    "CrashLoopBackOff",
+    "ImagePullBackOff"
+  ],
+  "root_cause": {
+    "status": "unknown",
+    "details": "Use pod events, container logs, and workload status to distinguish image, resource, scheduling, configuration, and application failures."
+  },
+  "prerequisites": [
+    "Approved read access to the relevant namespace and workload.",
+    "Confirm the cluster context and namespace before inspecting resources."
+  ],
+  "investigation_steps": [
+    "Confirm the current cluster context, namespace, and affected workload.",
+    "Inspect pod status, restart counts, recent events, and container logs.",
+    "Check image availability, resource requests, scheduling constraints, and referenced configuration."
+  ],
+  "resolution_steps": [
+    "Address the confirmed image, resource, configuration, or application issue through the standard deployment process.",
+    "Allow the controller to reconcile the workload and observe the replacement pod."
+  ],
+  "verification_steps": [
+    "Confirm the replacement pod is ready and restart counts are stable.",
+    "Verify the workload has its expected ready replicas and passes its health checks."
+  ],
+  "rollback_steps": [
+    "Roll back to the last known-good workload revision if the remediation causes additional failures.",
+    "Verify service readiness after rollback and notify the workload owner."
+  ],
+  "prevention": [
+    "Use readiness and liveness probes appropriate to the workload.",
+    "Set resource requests and limits based on observed needs and alert on repeated restarts."
+  ],
+  "tags": [
+    "sample",
+    "pod",
+    "cluster"
+  ],
+  "created_at": "2026-10-11T12:00:00Z",
+  "updated_at": "2026-10-11T12:00:00Z"
+}

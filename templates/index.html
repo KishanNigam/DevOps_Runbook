@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>Dashboard | DevOps Runbook</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="DevOps Runbook dashboard">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>runbook<span class="brand-period">.</span></span>
+      </a>
+
+      <p class="nav-heading">Workspace</p>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link is-active" href="#dashboard" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('all_runbooks') }}">
+          <span class="nav-icon" aria-hidden="true">▤</span><span>All Runbooks</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('new_runbook', return_to='/') }}">
+          <span class="nav-icon" aria-hidden="true">＋</span><span>Create Runbook</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('browse_categories') }}">
+          <span class="nav-icon" aria-hidden="true">◈</span><span>Categories</span>
+        </a>
+      </nav>
+
+      <p class="nav-heading secondary-heading">Preferences</p>
+      <nav class="side-nav" aria-label="Preferences">
+        <a class="nav-link" href="{{ url_for('settings_help') }}#settings">
+          <span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('settings_help') }}#help">
+          <span class="nav-icon" aria-hidden="true">?</span><span>Help</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-note">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Stored locally on this device</span>
+      </div>
+    </aside>
+
+    <main id="dashboard" class="main-content">
+      <header class="topbar">
+        <form class="search-form" role="search" aria-label="Search runbooks" action="{{ url_for('all_runbooks') }}" method="get">
+          <label class="visually-hidden" for="runbook-search">Search runbooks</label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="runbook-search" name="q" type="search" placeholder="Search runbooks, tools..." autocomplete="off">
+          <kbd aria-hidden="true">/</kbd>
+        </form>
+        <span class="local-badge"><span aria-hidden="true">●</span> Local workspace</span>
+      </header>
+
+      <div class="dashboard-content">
+        <section class="welcome-row" aria-labelledby="welcome-title">
+          <div>
+            <p class="eyebrow">Your operations workspace</p>
+            <h1 id="welcome-title">Good to have you back.</h1>
+            <p class="welcome-copy">Keep the steps that keep your systems running, all in one place.</p>
+          </div>
+          <a class="button button-primary" href="{{ url_for('new_runbook', return_to='/') }}"><span aria-hidden="true">＋</span> New runbook</a>
+        </section>
+
+        <section class="summary-grid" aria-label="Runbook summary">
+          <article class="summary-card">
+            <div class="summary-icon icon-blue" aria-hidden="true">▤</div>
+            <div>
+              <p class="summary-label">Total runbooks</p>
+              <p class="summary-value">{{ runbook_count }}</p>
+            </div>
+            <span class="summary-caption">in your library</span>
+          </article>
+          <article class="summary-card">
+            <div class="summary-icon icon-green" aria-hidden="true">⌘</div>
+            <div>
+              <p class="summary-label">Technologies</p>
+              <p class="summary-value">{{ technology_count }}</p>
+            </div>
+            <span class="summary-caption">across your runbooks</span>
+          </article>
+          <a class="summary-card quick-action" href="{{ url_for('new_runbook', return_to='/') }}">
+            <div class="summary-icon icon-violet" aria-hidden="true">＋</div>
+            <div>
+              <p class="summary-label">Quick action</p>
+              <p class="action-value">Create a runbook <span aria-hidden="true">→</span></p>
+            </div>
+          </a>
+        </section>
+
+        <div class="dashboard-grid">
+          <section id="runbooks" class="panel recent-panel" aria-labelledby="recent-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Your library</p>
+                <h2 id="recent-title">Recently updated</h2>
+              </div>
+              <a class="text-link" href="#runbooks">All runbooks <span aria-hidden="true">→</span></a>
+            </div>
+            <p id="search-status" class="search-status" aria-live="polite"></p>
+            {% if data_error %}
+              <p class="storage-error" role="alert">{{ data_error }}</p>
+            {% endif %}
+            {% if runbooks %}
+              <ul id="runbook-list" class="runbook-list">
+                {% for runbook in runbooks %}
+                  <li class="runbook-item" data-search="{{ (runbook.title ~ ' ' ~ runbook.summary ~ ' ' ~ runbook.category ~ ' ' ~ (runbook.technologies | join(' '))) | lower }}">
+                    <a class="recent-runbook-link" href="{{ url_for('runbook_detail', runbook_id=runbook.id) }}" aria-label="Open runbook: {{ runbook.title }}">
+                      <div class="runbook-symbol" aria-hidden="true">⌘</div>
+                      <div class="runbook-info">
+                        <h3>{{ runbook.title }}</h3>
+                        <p>{{ runbook.summary }}</p>
+                        <div class="runbook-meta">
+                          <span class="category-tag">{{ runbook.category }}</span>
+                          <span>Updated {{ runbook.updated_at }}</span>
+                        </div>
+                      </div>
+                      <div class="technology-tags" aria-label="Technologies">
+                        {% for technology in runbook.technologies %}
+                          <span>{{ technology }}</span>
+                        {% endfor %}
+                      </div>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+              <p id="no-search-results" class="empty-state" hidden>No runbooks match your search. Try another term.</p>
+            {% elif data_error %}
+              <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">!</span>
+                <h3>Runbook data unavailable</h3>
+                <p>Check the JSON files in <code>data/runbooks/</code> and reload the dashboard.</p>
+              </div>
+              <ul id="runbook-list" class="runbook-list" hidden></ul>
+              <p id="no-search-results" class="empty-state" hidden>No runbooks match your search. Try another term.</p>
+            {% else %}
+              <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">▤</span>
+                <h3>No runbooks yet</h3>
+                <p>Your library is ready. Create your first runbook to get started.</p>
+                <a class="button button-secondary" href="{{ url_for('new_runbook', return_to='/') }}">Create a runbook</a>
+              </div>
+              <ul id="runbook-list" class="runbook-list" hidden></ul>
+              <p id="no-search-results" class="empty-state" hidden>No runbooks match your search. Try another term.</p>
+            {% endif %}
+          </section>
+
+          <section id="categories" class="panel shortcut-panel" aria-labelledby="shortcuts-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Browse by tool</p>
+                <h2 id="shortcuts-title">Technologies &amp; categories</h2>
+              </div>
+              <a class="text-link" href="{{ url_for('browse_categories') }}">Browse all <span aria-hidden="true">→</span></a>
+            </div>
+            {% if runbook_categories or runbook_technologies %}
+              <div class="shortcut-list">
+                {% for category in runbook_categories %}
+                  <button class="shortcut-chip" type="button" data-filter-type="category" data-filter-value="{{ category }}">{{ category }}<span aria-hidden="true">↗</span></button>
+                {% endfor %}
+                {% for technology in runbook_technologies %}
+                  <button class="shortcut-chip" type="button" data-filter-type="technology" data-filter-value="{{ technology }}">{{ technology }}<span aria-hidden="true">↗</span></button>
+                {% endfor %}
+              </div>
+              <p class="shortcut-hint">Select a shortcut to find matching runbooks.</p>
+            {% else %}
+              <div class="shortcut-empty">
+                <p>Shortcuts will appear here when runbooks include technology or category details.</p>
+                <a class="text-link" href="{{ url_for('new_runbook', return_to='/') }}">Add your first runbook <span aria-hidden="true">→</span></a>
+              </div>
+            {% endif %}
+          </section>
+        </div>
+
+        <section id="settings" class="panel settings-panel" aria-labelledby="settings-title">
+          <div>
+            <p class="eyebrow">Preferences</p>
+            <h2 id="settings-title">Settings</h2>
+            <p>Choose a comfortable appearance or review application settings.</p>
+          </div>
+          <div class="guide-action-row">
+            <button id="theme-toggle" class="button button-secondary" type="button" aria-pressed="false">Switch to dark theme</button>
+            <a class="button button-secondary" href="{{ url_for('settings_help') }}#settings">Settings &amp; Help</a>
+          </div>
+        </section>
+
+        <section id="help" class="panel help-panel" aria-labelledby="help-title">
+          <p class="eyebrow">Need a hand?</p>
+          <h2 id="help-title">Help</h2>
+          <p>Runbooks are loaded from JSON files in <code>data/runbooks/</code>. Review schema and troubleshooting guidance on the <a href="{{ url_for('settings_help') }}#help">Settings &amp; Help page</a> or in the project README.</p>
+          <a class="text-link" href="{{ url_for('settings_help') }}#help">Open Help <span aria-hidden="true">→</span></a>
+        </section>
+      </div>
+
+      <footer class="page-footer">DevOps Runbook <span aria-hidden="true">·</span> Local by design</footer>
+    </main>
+  </div>
+</body>
+</html>

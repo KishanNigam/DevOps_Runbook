@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>All Runbooks | DevOps Runbook</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/runbooks.js') }}" defer></script>
+</head>
+<body data-api-url="{{ url_for('api_list_runbooks') }}">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="DevOps Runbook dashboard">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>runbook<span class="brand-period">.</span></span>
+      </a>
+      <p class="nav-heading">Workspace</p>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link" href="{{ url_for('home') }}">
+          <span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span>
+        </a>
+        <a class="nav-link is-active" href="{{ url_for('all_runbooks') }}" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">▤</span><span>All Runbooks</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('new_runbook', return_to=request.full_path.rstrip('?'), results_url=request.full_path.rstrip('?')) }}">
+          <span class="nav-icon" aria-hidden="true">＋</span><span>Create Runbook</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('browse_categories') }}">
+          <span class="nav-icon" aria-hidden="true">◈</span><span>Categories</span>
+        </a>
+      </nav>
+      <p class="nav-heading secondary-heading">Preferences</p>
+      <nav class="side-nav" aria-label="Preferences">
+        <a class="nav-link" href="{{ url_for('settings_help') }}#settings">
+          <span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('settings_help') }}#help">
+          <span class="nav-icon" aria-hidden="true">?</span><span>Help</span>
+        </a>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Stored locally on this device</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <form id="runbook-search-form" class="search-form" role="search" aria-label="Search all runbooks">
+          <label class="visually-hidden" for="runbook-search">Search all runbooks</label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="runbook-search" name="q" type="search" placeholder="Search titles, symptoms, steps, tags..." autocomplete="off">
+          <kbd aria-hidden="true">/</kbd>
+        </form>
+        <span class="local-badge"><span aria-hidden="true">●</span> Local workspace</span>
+      </header>
+
+      <div class="dashboard-content listing-content">
+        <section class="listing-heading" aria-labelledby="listing-title">
+          <div>
+            <p class="eyebrow">Your library</p>
+            <h1 id="listing-title">All runbooks</h1>
+            <p class="welcome-copy">Search and filter your operational procedures.</p>
+          </div>
+        </section>
+
+        <section class="panel filters-panel" aria-label="Search and filter runbooks">
+          <div class="filter-grid">
+            <div class="filter-field">
+              <label for="filter-technology">Technology</label>
+              <select id="filter-technology" name="technology"><option value="">All technologies</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-category">Category</label>
+              <select id="filter-category" name="category"><option value="">All categories</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-environment">Environment</label>
+              <select id="filter-environment" name="environment"><option value="">All environments</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="filter-severity">Severity</label>
+              <select id="filter-severity" name="severity"><option value="">All severities</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="sort-runbooks">Sort by</label>
+              <select id="sort-runbooks" name="sort">
+                <option value="updated">Recently updated</option>
+                <option value="title">Title (A–Z)</option>
+              </select>
+            </div>
+            <button id="clear-filters" class="button button-secondary clear-filters" type="button">Clear filters</button>
+          </div>
+        </section>
+
+        <section class="results-section" aria-labelledby="results-heading">
+          <div class="results-heading">
+            <h2 id="results-heading">Runbooks</h2>
+            <p id="result-count" class="result-count" role="status" aria-live="polite">Loading runbooks…</p>
+          </div>
+          <div id="runbook-results" class="listing-results" aria-busy="true"></div>
+          <div id="listing-empty" class="panel listing-empty" hidden>
+            <span class="empty-icon" aria-hidden="true">⌕</span>
+            <h3 id="empty-title">No runbooks found</h3>
+            <p id="empty-description">Try another search or clear some filters.</p>
+            <button class="button button-secondary" type="button" data-clear-filters>Clear search and filters</button>
+          </div>
+          <div id="listing-error" class="panel listing-empty" role="alert" hidden>
+            <span class="empty-icon" aria-hidden="true">!</span>
+            <h3>Runbooks could not be loaded</h3>
+            <p id="error-description">Check the runbook data and try again.</p>
+            <button id="retry-listing" class="button button-secondary" type="button">Try again</button>
+          </div>
+        </section>
+      </div>
+      <footer class="page-footer">DevOps Runbook <span aria-hidden="true">·</span> Local by design</footer>
+    </main>
+  </div>
+</body>
+</html>

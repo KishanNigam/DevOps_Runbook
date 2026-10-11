@@ -1,0 +1,55 @@
+{
+  "id": "jenkins-build-failure",
+  "title": "Sample: Diagnose a Jenkins build failure",
+  "summary": "Trace a failed pipeline stage and recover a repeatable build.",
+  "category": "CI/CD",
+  "technologies": [
+    "Jenkins",
+    "Git"
+  ],
+  "environment": "Non-production Jenkins controller and build agent",
+  "severity": "medium",
+  "symptoms": [
+    "A pipeline stops before producing its expected build artifact.",
+    "Repeated builds fail at the same stage or on the same agent."
+  ],
+  "error_messages": [
+    "Build step failed with a non-zero exit code"
+  ],
+  "root_cause": {
+    "status": "unknown",
+    "details": "Determine whether the failure is caused by source changes, pipeline configuration, unavailable dependencies, or an unhealthy build agent."
+  },
+  "prerequisites": [
+    "Read access to the job console output and pipeline definition.",
+    "Confirm the affected branch and build identifier with the job owner."
+  ],
+  "investigation_steps": [
+    "Locate the first failing pipeline stage and capture its relevant console output.",
+    "Compare the failing revision with the most recent successful build.",
+    "Check agent availability, workspace capacity, and dependency service health."
+  ],
+  "resolution_steps": [
+    "Correct the confirmed source or pipeline issue through the normal review process.",
+    "Restore an unhealthy agent or approved dependency, then rerun the affected job."
+  ],
+  "verification_steps": [
+    "Confirm the pipeline completes all required stages.",
+    "Verify the expected artifact is produced and associated with the intended revision."
+  ],
+  "rollback_steps": [
+    "Revert the reviewed pipeline or source change if the attempted fix introduces a regression.",
+    "Disable artifact promotion until a successful verified build is available."
+  ],
+  "prevention": [
+    "Keep pipeline dependencies and agent images reproducible.",
+    "Retain build logs and notify maintainers about repeated stage failures."
+  ],
+  "tags": [
+    "sample",
+    "pipeline",
+    "build"
+  ],
+  "created_at": "2026-10-11T12:00:00Z",
+  "updated_at": "2026-10-11T12:00:00Z"
+}

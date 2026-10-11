@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>Categories &amp; Technologies | DevOps Runbook</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="DevOps Runbook dashboard">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>runbook<span class="brand-period">.</span></span>
+      </a>
+      <p class="nav-heading">Workspace</p>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a class="nav-link" href="{{ url_for('home') }}">
+          <span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('all_runbooks') }}">
+          <span class="nav-icon" aria-hidden="true">▤</span><span>All Runbooks</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('new_runbook', return_to='/categories', results_url='/categories') }}">
+          <span class="nav-icon" aria-hidden="true">＋</span><span>Create Runbook</span>
+        </a>
+        <a class="nav-link is-active" href="{{ url_for('browse_categories') }}" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">◈</span><span>Categories</span>
+        </a>
+      </nav>
+      <p class="nav-heading secondary-heading">Preferences</p>
+      <nav class="side-nav" aria-label="Preferences">
+        <a class="nav-link" href="{{ url_for('settings_help') }}#settings">
+          <span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('settings_help') }}#help">
+          <span class="nav-icon" aria-hidden="true">?</span><span>Help</span>
+        </a>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Stored locally on this device</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <form class="search-form" role="search" aria-label="Search runbooks" action="{{ url_for('all_runbooks') }}" method="get">
+          <label class="visually-hidden" for="runbook-search">Search runbooks</label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="runbook-search" name="q" type="search" placeholder="Search runbooks, tools..." autocomplete="off">
+          <kbd aria-hidden="true">/</kbd>
+        </form>
+        <span class="local-badge"><span aria-hidden="true">●</span> Local workspace</span>
+      </header>
+
+      <div class="dashboard-content listing-content">
+        <section class="listing-heading" aria-labelledby="browse-title">
+          <div>
+            <p class="eyebrow">Explore your library</p>
+            <h1 id="browse-title">Categories &amp; technologies</h1>
+            <p class="welcome-copy">Browse runbooks by the categories and tools in your workspace.</p>
+          </div>
+          {% if runbook_count is defined %}
+            <p class="browse-library-count">{{ runbook_count }} runbook{{ "" if runbook_count == 1 else "s" }} in your library</p>
+          {% endif %}
+        </section>
+
+        {% if browse_error %}
+          <section class="panel listing-empty" role="alert">
+            <span class="empty-icon" aria-hidden="true">!</span>
+            <h2>Browse data unavailable</h2>
+            <p>{{ browse_error }}</p>
+            <a class="button button-secondary" href="{{ url_for('browse_categories') }}">Try again</a>
+          </section>
+        {% else %}
+          {% for heading, description, kind, groups in [
+            ("Categories", "Runbooks grouped by their category.", "category", categories),
+            ("Technologies", "Runbooks grouped by every technology they use.", "technology", technologies)
+          ] %}
+            <section class="panel browse-section" aria-labelledby="{{ kind }}-heading">
+              <div class="browse-section-heading">
+                <div>
+                  <p class="eyebrow">Browse by {{ "topic" if kind == "category" else "tool" }}</p>
+                  <h2 id="{{ kind }}-heading">{{ heading }}</h2>
+                  <p>{{ description }}</p>
+                </div>
+              </div>
+              <div class="browse-group-grid">
+                {% for group in groups %}
+                  <a
+                    class="browse-group-card"
+                    href="{{ url_for('all_runbooks', **{kind: group.name}) }}"
+                    data-browse-group="{{ kind }}"
+                    data-browse-name="{{ group.name }}"
+                    data-runbook-count="{{ group.count }}"
+                    aria-label="Browse {{ group.count }} {% if group.count == 1 %}runbook{% else %}runbooks{% endif %} in {{ group.name }}"
+                  >
+                    <span class="browse-group-name">{{ group.name }}</span>
+                    <span class="browse-group-count">{{ group.count }} runbook{{ "" if group.count == 1 else "s" }}</span>
+                    <span class="browse-group-arrow" aria-hidden="true">→</span>
+                  </a>
+                {% else %}
+                  <p class="browse-empty">No {{ heading | lower }} are available yet.</p>
+                {% endfor %}
+              </div>
+              {% if not groups %}
+                <p class="browse-empty">Add runbooks with {{ "category" if kind == "category" else "technology" }} details to populate this section.</p>
+              {% endif %}
+            </section>
+          {% endfor %}
+          {% if runbook_count == 0 %}
+            <p class="browse-empty-state">Your library is empty. These common browsing options are ready for runbooks when you add them.</p>
+          {% endif %}
+        {% endif %}
+      </div>
+      <footer class="page-footer">DevOps Runbook <span aria-hidden="true">·</span> Local by design</footer>
+    </main>
+  </div>
+</body>
+</html>
